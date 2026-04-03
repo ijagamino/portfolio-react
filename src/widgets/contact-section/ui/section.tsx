@@ -8,18 +8,18 @@ import { SplitText } from "gsap/all";
 import { useRef } from "react";
 
 export default function ContactSection() {
-  const sectionRef = useRef<HTMLDivElement | null>(null)
+  const sectionRef = useRef<HTMLDivElement | null>(null);
   const introductionRef = useRef<HTMLParagraphElement | null>(null);
   const introductionTopRef = useRef<HTMLParagraphElement | null>(null);
   const introductionBottomRef = useRef<HTMLParagraphElement | null>(null);
-  const headingRef = useRef<HTMLHeadingElement | null>(null)
-  const socialLinkContainerRef = useRef<HTMLUListElement | null>(null)
-  const socialLinksRef = useRef<HTMLLIElement[]>([])
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const socialLinkContainerRef = useRef<HTMLUListElement | null>(null);
+  const socialLinksRef = useRef<HTMLLIElement[]>([]);
 
   useGSAP(() => {
-    const heading = headingRef.current
-    if (!heading) return
-    if (!sectionRef.current) return
+    const heading = headingRef.current;
+    if (!heading) return;
+    if (!sectionRef.current) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -28,62 +28,73 @@ export default function ContactSection() {
         scrub: true,
         start: "top top",
         end: "+=1500",
-      }
-    })
-
+      },
+    });
 
     const topSplit = SplitText.create(introductionTopRef.current, {
-      type: "chars"
-    })
+      type: "chars",
+    });
 
     const bottomSplit = SplitText.create(introductionBottomRef.current, {
-      type: "chars"
-    })
+      type: "chars",
+    });
 
-    tl.from(topSplit.chars, {
-      opacity: 0,
-      ease: "elastic.out",
-      stagger: {
-        each: 2 / topSplit.chars.length,
-        from: "center"
+    tl.from(
+      topSplit.chars,
+      {
+        opacity: 0,
+        ease: "elastic.out",
+        stagger: {
+          each: 2 / topSplit.chars.length,
+          from: "center",
+        },
       },
-    }, ">");
+      ">",
+    );
 
-    tl.from(bottomSplit.chars, {
-      opacity: 0,
-      ease: "elastic.out",
-      stagger: {
-        each: 2 / bottomSplit.chars.length,
-        from: "edges"
+    tl.from(
+      bottomSplit.chars,
+      {
+        opacity: 0,
+        ease: "elastic.out",
+        stagger: {
+          each: 2 / bottomSplit.chars.length,
+          from: "edges",
+        },
       },
-    }, "<");
+      "<",
+    );
 
     tl.to(
       [introductionTopRef.current, introductionBottomRef.current],
       {
         y: (i) => (i === 0 ? -40 : 40),
         opacity: 0,
-        duration: 5,
+        delay: 1,
       },
-      ">"
+      ">",
     );
-
 
     tl.from(
       [headingRef.current, socialLinkContainerRef.current],
       {
         y: (i) => (i === 0 ? -40 : 40),
         opacity: 0,
-        duration: 5,
       },
-      ">"
+      ">",
     );
-  })
+  });
 
   return (
-    <section ref={sectionRef} className="grid place-items-center">
-      <div className="fixed top-1/2 left-1/2 flex justify-center w-full -translate-1/2">
-        <SectionIntroduction ref={introductionRef} className="opacity-0">
+    <section
+      ref={sectionRef}
+      className="grid place-items-center"
+    >
+      <div className="fixed flex justify-center w-full top-1/2 left-1/2 -translate-1/2">
+        <SectionIntroduction
+          ref={introductionRef}
+          className="opacity-0"
+        >
           Great... so how do I contact you?
         </SectionIntroduction>
         <SectionIntroduction
@@ -105,18 +116,24 @@ export default function ContactSection() {
 
       <div>
         <SectionHeader>
-          <SectionHeading ref={headingRef}>
-            Let's Connect
-          </SectionHeading>
+          <SectionHeading ref={headingRef}>Let's Connect</SectionHeading>
         </SectionHeader>
-        <ul ref={socialLinkContainerRef} className="flex flex-wrap justify-center gap-4 md:gap-8">
+        <ul
+          ref={socialLinkContainerRef}
+          className="flex flex-wrap justify-center gap-4 md:gap-8"
+        >
           {socialLinks.map((socialLink, i) => (
             <li
               ref={(el) => {
                 if (el) socialLinksRef.current[i] = el;
               }}
-              key={socialLink.link} className="flex gap-2 px-2 border-2">
-              <a className="flex items-center" href={socialLink.link}>
+              key={socialLink.link}
+              className="flex gap-2 px-2 py-1 rounded bg-primary"
+            >
+              <a
+                className="flex items-center"
+                href={socialLink.link}
+              >
                 <socialLink.icon className="size-16" />
                 {socialLink.label}
               </a>
@@ -125,5 +142,5 @@ export default function ContactSection() {
         </ul>
       </div>
     </section>
-  )
+  );
 }

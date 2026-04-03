@@ -8,9 +8,9 @@ import { useRef } from "react";
 import { WORDS } from "../config/words";
 
 export default function IntroductionSection() {
-  const sectionRef = useRef<HTMLElement | null>(null)
+  const sectionRef = useRef<HTMLElement | null>(null);
   const introductionRef = useRef<HTMLParagraphElement | null>(null);
-  const headingRef = useRef<HTMLHeadingElement | null>(null)
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
   const wordRef = useRef<HTMLHeadingElement | null>(null);
 
   useGSAP(() => {
@@ -18,8 +18,8 @@ export default function IntroductionSection() {
     gsap.set(introductionRef.current, { opacity: 1 });
 
     const introductionRefSplit = SplitText.create(introductionRef.current, {
-      type: "chars"
-    })
+      type: "chars",
+    });
 
     gsap.set(headingRef.current, { opacity: 0 });
     gsap.set(introductionRef.current, { opacity: 1 });
@@ -31,10 +31,11 @@ export default function IntroductionSection() {
         scrub: true,
         start: "top top",
         end: "+=1500",
-      }
-    })
+      },
+    });
 
-    tl.from(introductionRefSplit.chars,
+    tl.from(
+      introductionRefSplit.chars,
       {
         opacity: 0,
         y: 10,
@@ -42,40 +43,56 @@ export default function IntroductionSection() {
         stagger: 0.2,
         ease: "elastic.in",
       },
-      0.5
-    )
+      0.5,
+    );
 
-    tl.to(introductionRef.current, { opacity: 0, y: -20, duration: 1 }, ">+1")
-      .to(headingRef.current, { opacity: 1, duration: 1 }, ">");
+    tl.to(
+      introductionRef.current,
+      { opacity: 0, y: -20, duration: 1 },
+      ">+1",
+    ).to(headingRef.current, { opacity: 1, duration: 1 }, ">");
 
     WORDS.forEach((word, i) => {
       const position = i * (1 / WORDS.length); // 0, 0.33, 0.66
 
-      tl.add(() => {
-        if (wordRef.current) wordRef.current.textContent = word;
-      }, `>${position * WORDS.length}`); // multiply by total tl duration units
+      tl.add(
+        () => {
+          if (wordRef.current) wordRef.current.textContent = word;
+        },
+        `>${position * WORDS.length}`,
+      );
 
-      tl.fromTo(wordRef.current,
-        { opacity: 0, y: 10 },
+      tl.fromTo(
+        wordRef.current,
+        { opacity: 0, y: 10, delay: 1 },
         { opacity: 1, y: 0, duration: 0.5 },
-        "<"
+        "<",
       );
     });
-  })
+  });
   return (
-    <section ref={sectionRef} className="grid place-items-center">
-      <SectionIntroduction ref={introductionRef}>
-        ...so?
-      </SectionIntroduction>
+    <section
+      ref={sectionRef}
+      className="grid place-items-center"
+    >
+      <SectionIntroduction ref={introductionRef}>...so?</SectionIntroduction>
       <SectionHeader>
-        <SectionHeading ref={headingRef} className="font-normal">
+        <SectionHeading
+          ref={headingRef}
+          className="font-normal"
+        >
           I build
-          <span className="relative font-extrabold">
-            <span ref={wordRef} className="block w-full">efficient</span>
+          <span className="relative block font-extrabold">
+            <span
+              ref={wordRef}
+              className="inline-block px-2 py-1 rounded bg-primary"
+            >
+              efficient
+            </span>
           </span>
           web applications
         </SectionHeading>
       </SectionHeader>
     </section>
-  )
+  );
 }
