@@ -1,41 +1,27 @@
-import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { ComponentProps, ReactNode, RefObject } from "react";
 
 interface SectionIntroductionProps extends ComponentProps<"p"> {
   children: ReactNode;
+  containerRef: RefObject<HTMLDivElement | null>
 }
-
-const sectionIntroductionVariants = cva(
-  "absolute text-4xl font-medium px-2 py-1 rounded text-center text-primary-foreground",
-  {
-    variants: {
-      centered: {
-        false: null,
-        true: "top-1/2 left-1/2 -translate-1/2",
-      },
-    },
-    defaultVariants: {
-      centered: false,
-    },
-  },
-);
 
 export default function SectionIntroduction({
   children,
-  centered,
   className,
+  containerRef,
   ...props
-}: SectionIntroductionProps &
-  VariantProps<typeof sectionIntroductionVariants>) {
+}: SectionIntroductionProps) {
   return (
-    <>
+    <div ref={containerRef} className="absolute">
       <p
-        className={cn(sectionIntroductionVariants({ centered, className }))}
+        className={cn("text-4xl font-medium text-center text-primary-foreground", className)}
         {...props}
       >
-        <span className="bg-primary">{children}</span>
+        <span className="px-2 py-1 rounded bg-primary">
+          {children}
+        </span>
       </p>
-    </>
+    </div >
   );
 }
