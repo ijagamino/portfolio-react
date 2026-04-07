@@ -1,30 +1,38 @@
+import { useTheme } from "@/app/providers/theme";
+import { DUST_BUTTON_PARTICLE_START_PROGRESS } from "@/shared/lib/disintegration-timing";
+import {
+  createParticlesFromText,
+  renderParticles,
+  setupCanvas
+} from "@/shared/lib/particles";
+import Section from "@/shared/ui/section";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Flip, ScrollSmoother, ScrollTrigger, SplitText } from "gsap/all";
-import { useRef, useState, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type ComponentProps, type RefObject } from "react";
 import { createPortal } from "react-dom";
-import {
-  setupCanvas,
-  createParticlesFromText,
-  renderParticles,
-} from "@/shared/lib/particles";
-import { DUST_BUTTON_PARTICLE_START_PROGRESS } from "@/shared/lib/disintegration-timing";
-import { useTheme } from "@/app/providers/theme";
 
-export const HERO_DISINTEGRATION_TRIGGER_ID = "hero-disintegration";
+interface HeroSectionProps extends ComponentProps<"section"> {
+  canvasRef: RefObject<HTMLCanvasElement | null>
+}
 
 export default function HeroSection({
   ref: externalRef,
+  canvasRef,
   ...props
-}: ComponentProps<"section">) {
+}: HeroSectionProps) {
+  const { theme } = useTheme();
+  const themeRef = useRef(theme);
+  const [portalWord, setPortalWord] = useState<string | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const descriptionRef = useRef<HTMLParagraphElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
-  const [portalWord, setPortalWord] = useState<string | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { theme } = useTheme();
   const smoother = ScrollSmoother.get();
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   const mergeRefs = (element: HTMLElement | null) => {
     sectionRef.current = element;
@@ -47,11 +55,17 @@ export default function HeroSection({
     const initParticles = () => {
       setupCanvas(canvas);
 
-      const headingParticles = createParticlesFromText(heading);
-      const descriptionParticles = createParticlesFromText(description);
+      const screenArea = window.innerWidth * window.innerHeight;
+      const baseReductionFactor = screenArea > 2000000
+        ? 2 : screenArea > 1000000
+          ? 3 : screenArea > 500000
+            ? 4 : 5
+
+      const headingParticles = createParticlesFromText(heading, baseReductionFactor);
+      const descriptionParticles = createParticlesFromText(description, baseReductionFactor + 1);
       const particles = [...headingParticles, ...descriptionParticles];
 
-      ScrollTrigger.create({
+      const scrollTrigger = ScrollTrigger.create({
         trigger: trigger,
         start: "center center",
         end: "+=500",
@@ -62,7 +76,7 @@ export default function HeroSection({
             self.progress <= DUST_BUTTON_PARTICLE_START_PROGRESS
               ? 0
               : (self.progress - DUST_BUTTON_PARTICLE_START_PROGRESS) /
-                (1 - DUST_BUTTON_PARTICLE_START_PROGRESS);
+              (1 - DUST_BUTTON_PARTICLE_START_PROGRESS);
 
           heading.style.opacity = progress > 0.01 ? "0" : "1";
           description.style.opacity = progress > 0.0 ? "0" : "1";
@@ -77,13 +91,15 @@ export default function HeroSection({
               alpha: 1 - progress * 0.8,
             }));
 
-            const particleColor = theme === "light" ? "#000000" : "#ffffff";
+            const particleColor = themeRef.current === "light" ? "#000000" : "#ffffff";
             renderParticles(ctx, renderedParticles, particleColor);
           } else {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
           }
         },
       });
+
+      return scrollTrigger;
     };
 
     const split = SplitText.create(headingRef.current, {
@@ -119,53 +135,34 @@ export default function HeroSection({
         onComplete: () => {
           gsap.set(words[0], { opacity: 1 });
           setPortalWord(null);
-          smoother.paused(false);
         },
-      });
+      })
 
-      tl.fromTo(
-        clone,
-        {
-          rotation: 45,
-          scale: 0.5,
-          duration: 0.5,
-        },
-        {
-          scale: 3,
-          ease: "elastic.out",
-        },
-        "<",
-      );
-
-      tl.to(
-        clone,
-        {
+      tl.fromTo(clone, {
+        rotation: 45,
+        scale: 0.5,
+        duration: 0.5,
+      }, {
+        scale: 3,
+        ease: "elastic.out",
+      }, "<")
+        .to(clone, {
           scale: 1,
-        },
-        ">",
-      );
-
-      tl.to(
-        [words[1], words[2]],
-        {
+        }, ">")
+        .to([words[1], words[2]], {
           opacity: 1,
           scale: 1,
           stagger: 0.2,
-        },
-        ">",
-      );
-
-      tl.to(
-        description,
-        {
+        }, ">")
+        .to(description, {
           opacity: 1,
-        },
-        ">",
-      );
-
-      tl.call(initParticles);
-    });
-  }, [theme, smoother]);
+        }, ">")
+        .call(() => {
+          initParticles();
+          smoother.paused(false);
+        })
+    })
+  }, [smoother])
 
   return (
     <>
@@ -188,7 +185,7 @@ export default function HeroSection({
           </div>,
           document.body,
         )}
-      <section
+      <Section
         ref={mergeRefs}
         className="grid text-center place-items-center"
         {...props}
@@ -209,7 +206,8 @@ export default function HeroSection({
             </p>
           </header>
         </div>
-      </section>
+      </Section>
+
       {createPortal(
         <canvas
           ref={canvasRef}

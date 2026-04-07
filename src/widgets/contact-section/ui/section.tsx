@@ -1,146 +1,157 @@
 import { socialLinks } from "@/entities/social-link/model/data";
+import SocialLink from "@/entities/social-link/ui/social-link";
+import Field from "@/shared/ui/field";
+import Input from "@/shared/ui/input";
+import Label from "@/shared/ui/label";
+import Section from "@/shared/ui/section";
 import SectionHeader from "@/shared/ui/section-header";
 import SectionHeading from "@/shared/ui/section-heading";
 import SectionIntroduction from "@/shared/ui/section-introduction";
+import Textarea from "@/shared/ui/textarea";
+import { createGSAPNavigationHandler } from "@/shared/lib/gsap-navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { SplitText } from "gsap/all";
+import { ScrollTrigger, SplitText } from "gsap/all";
 import { useRef } from "react";
 
 export default function ContactSection() {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const introductionRef = useRef<HTMLParagraphElement | null>(null);
-  const introductionTopRef = useRef<HTMLParagraphElement | null>(null);
-  const introductionBottomRef = useRef<HTMLParagraphElement | null>(null);
+  const introductionContainerRef = useRef<HTMLDivElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const headingContainerRef = useRef<HTMLDivElement | null>(null);
+  const contentContainerRef = useRef<HTMLDivElement | null>(null);
   const socialLinkContainerRef = useRef<HTMLUListElement | null>(null);
   const socialLinksRef = useRef<HTMLLIElement[]>([]);
+  const formRef = useRef<HTMLFormElement | null>(null)
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const stRef = useRef<ScrollTrigger | null>(null);
 
   useGSAP(() => {
-    const heading = headingRef.current;
-    if (!heading) return;
-    if (!sectionRef.current) return;
+    const section = sectionRef.current
+    const introduction = introductionRef.current
+    const introductionContainer = introductionContainerRef.current
+    const heading = headingRef.current
+    const contentContainer = contentContainerRef.current
+    const socialLinkContainer = socialLinkContainerRef.current
+
+    if (!section || !introduction || !introductionContainer || !heading || !contentContainer || !socialLinkContainer) return
+
+    gsap.set(introduction, { opacity: 0 })
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.current,
+        trigger: section,
         pin: true,
         scrub: true,
         start: "top top",
         end: "+=1500",
+        onRefresh(self) {
+          stRef.current = self
+        },
       },
     });
 
-    const topSplit = SplitText.create(introductionTopRef.current, {
+    tlRef.current = tl
+
+    const introductionSplit = SplitText.create(introduction, {
       type: "chars",
     });
 
-    const bottomSplit = SplitText.create(introductionBottomRef.current, {
-      type: "chars",
-    });
-
-    tl.from(
-      topSplit.chars,
-      {
+    tl.to(introduction, {
+      opacity: 1
+    }, "<")
+      .from(introductionSplit.chars, {
         opacity: 0,
         ease: "elastic.out",
         stagger: {
-          each: 2 / topSplit.chars.length,
-          from: "center",
+          each: 2 / introductionSplit.chars.length,
+          from: "center"
         },
-      },
-      ">",
-    );
-
-    tl.from(
-      bottomSplit.chars,
-      {
+      }, ">")
+      .to(introductionSplit.chars, {
         opacity: 0,
         ease: "elastic.out",
         stagger: {
-          each: 2 / bottomSplit.chars.length,
-          from: "edges",
+          each: 2 / introductionSplit.chars.length,
+          from: "edges"
         },
-      },
-      "<",
-    );
-
-    tl.to(
-      [introductionTopRef.current, introductionBottomRef.current],
-      {
-        y: (i) => (i === 0 ? -40 : 40),
+      }, ">+2")
+      .from([heading, contentContainer], {
+        y: (i: number) => (i === 0 ? -40 : 40),
         opacity: 0,
-        delay: 1,
-      },
-      ">",
-    );
+      })
+      .to(introductionContainer, {
+        opacity: 0
+      }, "<")
+      .addLabel("contact-revealed")
 
-    tl.from(
-      [headingRef.current, socialLinkContainerRef.current],
-      {
-        y: (i) => (i === 0 ? -40 : 40),
-        opacity: 0,
-      },
-      ">",
-    );
-  });
+    const handler = createGSAPNavigationHandler(tlRef);
+
+    document.addEventListener("gsap-nav:contact", handler);
+    return () => document.removeEventListener("gsap-nav:contact", handler);
+  })
 
   return (
-    <section
+    <Section
       ref={sectionRef}
-      className="grid place-items-center"
+      id="contact"
     >
-      <div className="fixed flex justify-center w-full top-1/2 left-1/2 -translate-1/2">
-        <SectionIntroduction
-          ref={introductionRef}
-          className="opacity-0"
-        >
-          Great... so how do I contact you?
-        </SectionIntroduction>
-        <SectionIntroduction
-          ref={introductionTopRef}
-          className="overflow-hidden"
-          style={{ clipPath: "inset(0 0 40% 0)" }}
-        >
-          Great... but how do I actually contact you?
-        </SectionIntroduction>
+      <SectionIntroduction
+        ref={introductionRef}
+        containerRef={introductionContainerRef}
+      >
+        How do I contact you?
+      </SectionIntroduction>
 
-        <SectionIntroduction
-          ref={introductionBottomRef}
-          className="overflow-hidden"
-          style={{ clipPath: "inset(40% 0 0 0)" }}
-        >
-          Great... but how do I actually contact you?
-        </SectionIntroduction>
-      </div>
-
-      <div>
+      <div className="w-full max-w-4xl">
         <SectionHeader>
-          <SectionHeading ref={headingRef}>Let's Connect</SectionHeading>
+          <SectionHeading
+            ref={headingRef}
+            containerRef={headingContainerRef}
+          >
+            Let's Connect
+          </SectionHeading>
         </SectionHeader>
-        <ul
-          ref={socialLinkContainerRef}
-          className="flex flex-wrap justify-center gap-4 md:gap-8"
-        >
-          {socialLinks.map((socialLink, i) => (
-            <li
-              ref={(el) => {
-                if (el) socialLinksRef.current[i] = el;
-              }}
-              key={socialLink.link}
-              className="flex gap-2 px-2 py-1 rounded bg-primary"
-            >
-              <a
-                className="flex items-center"
-                href={socialLink.link}
+
+        <div ref={contentContainerRef} className="grid gap-8 md:grid-cols-2">
+          <form
+            ref={formRef}
+            className="flex flex-col gap-4"
+            action="https://formspree.io/f/mbdpwylv"
+            method="POST"
+          >
+            <Field className="flex flex-col gap-2">
+              <Label htmlFor="name">Name (optional)</Label>
+              <Input name="name" id="name" type="text" />
+            </Field>
+
+            <Field className="flex flex-col gap-2">
+              <Label htmlFor="message">Message</Label>
+              <Textarea name="message" id="message" rows={8}></Textarea>
+            </Field>
+          </form>
+
+          <ul
+            ref={socialLinkContainerRef}
+            className="flex flex-wrap justify-center gap-4 mt-4 md:flex-col md:gap-8 md:items-start md:mt-0"
+          >
+            {socialLinks.map((socialLink, i) => (
+              <li
+                ref={(el) => {
+                  if (el) socialLinksRef.current[i] = el;
+                }}
+                key={socialLink.link}
+                className="gap-2 px-2 py-1 rounded bg-primary"
               >
-                <socialLink.icon className="size-16" />
-                {socialLink.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+                <SocialLink
+                  socialLink={socialLink}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </section>
+    </Section>
   );
 }

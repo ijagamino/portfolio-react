@@ -1,3 +1,4 @@
+import Section from "@/shared/ui/section";
 import SectionHeader from "@/shared/ui/section-header";
 import SectionHeading from "@/shared/ui/section-heading";
 import SectionIntroduction from "@/shared/ui/section-introduction";
@@ -8,77 +9,102 @@ import { useRef } from "react";
 import { WORDS } from "../config/words";
 
 export default function IntroductionSection() {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const introductionRef = useRef<HTMLParagraphElement | null>(null);
-  const headingRef = useRef<HTMLHeadingElement | null>(null);
-  const wordRef = useRef<HTMLHeadingElement | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const introductionRef = useRef<HTMLParagraphElement>(null);
+  const introductionContainerRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const headingContainerRef = useRef<HTMLDivElement>(null);
+  const wordRef = useRef<HTMLHeadingElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const stRef = useRef<ScrollTrigger | null>(null);
 
   useGSAP(() => {
-    gsap.set(headingRef.current, { opacity: 0 });
-    gsap.set(introductionRef.current, { opacity: 1 });
+    const section = sectionRef.current
+    const introduction = introductionRef.current
+    const introductionContainer = introductionContainerRef.current
+    const heading = headingRef.current
+    const headingContainer = headingContainerRef.current
+    if (!section || !introduction || !introductionContainer || !heading || !headingContainer) return
 
-    const introductionRefSplit = SplitText.create(introductionRef.current, {
+    const introductionSplit = SplitText.create(introduction, {
       type: "chars",
-    });
-
-    gsap.set(headingRef.current, { opacity: 0 });
-    gsap.set(introductionRef.current, { opacity: 1 });
+    })
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.current,
+        trigger: section,
         pin: true,
         scrub: true,
         start: "top top",
-        end: "+=1500",
+        end: "+=2500",
+        onRefresh(self) {
+          stRef.current = self
+        },
       },
-    });
+    })
 
-    tl.from(
-      introductionRefSplit.chars,
-      {
+    tlRef.current = tl
+
+    tl.from(introductionContainer, {
+      opacity: 0,
+    })
+      .from(introductionSplit.chars, {
         opacity: 0,
         y: 10,
         scale: 0.5,
-        stagger: 0.2,
+        stagger: 0.5,
         ease: "elastic.in",
-      },
-      0.5,
-    );
-
-    tl.to(
-      introductionRef.current,
-      { opacity: 0, y: -20, duration: 1 },
-      ">+1",
-    ).to(headingRef.current, { opacity: 1, duration: 1 }, ">");
+      }, "<")
+      .to(introduction, {
+        opacity: 0,
+        y: -20,
+        duration: 2,
+      }, ">+5")
+      .from(heading, {
+        opacity: 0,
+        duration: 1
+      }, ">+2")
 
     WORDS.forEach((word, i) => {
-      const position = i * (1 / WORDS.length); // 0, 0.33, 0.66
+      const position = i * (1 / WORDS.length)
 
       tl.add(
         () => {
           if (wordRef.current) wordRef.current.textContent = word;
         },
         `>${position * WORDS.length}`,
-      );
+      ).from(wordRef.current, {
+        opacity: 0,
+        y: 10
+      }, ">")
+        .to(wordRef.current, {
+          opacity: 1,
+          y: 0, duration: 5
+        }, ">")
+    })
 
-      tl.fromTo(
-        wordRef.current,
-        { opacity: 0, y: 10, delay: 1 },
-        { opacity: 1, y: 0, duration: 0.5 },
-        "<",
-      );
-    });
-  });
+    tl.to(headingContainer, {
+      opacity: 0,
+      y: -20,
+      duration: 2,
+    }, ">")
+  })
+
   return (
-    <section
+    <Section
       ref={sectionRef}
-      className="grid place-items-center"
     >
-      <SectionIntroduction ref={introductionRef}>...so?</SectionIntroduction>
+      <SectionIntroduction
+        ref={introductionRef}
+        containerRef={introductionContainerRef}
+      >
+        ...so?
+      </SectionIntroduction>
+
       <SectionHeader>
         <SectionHeading
           ref={headingRef}
+          containerRef={headingContainerRef}
           className="font-normal"
         >
           I build
@@ -93,6 +119,6 @@ export default function IntroductionSection() {
           web applications
         </SectionHeading>
       </SectionHeader>
-    </section>
+    </Section>
   );
 }
