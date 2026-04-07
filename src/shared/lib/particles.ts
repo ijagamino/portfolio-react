@@ -1,7 +1,3 @@
-/**
- * Shared particle utility functions
- */
-
 export interface Particle {
   x: number;
   y: number;
@@ -11,23 +7,11 @@ export interface Particle {
   alpha: number;
 }
 
-export interface ColoredParticle extends Particle {
-  r: number;
-  g: number;
-  b: number;
-}
-
-/**
- * Setup canvas dimensions to match window
- */
 export function setupCanvas(canvas: HTMLCanvasElement) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 
-/**
- * Generate random target positions for particles
- */
 export function generateParticleTargets(count: number) {
   return Array.from({ length: count }, () => ({
     targetX: Math.random() * window.innerWidth,
@@ -35,9 +19,6 @@ export function generateParticleTargets(count: number) {
   }));
 }
 
-/**
- * Create particles from a button/element origin point
- */
 export function createParticlesFromPoint(
   element: HTMLElement,
   targets: { targetX: number; targetY: number }[],
@@ -56,14 +37,11 @@ export function createParticlesFromPoint(
   }));
 }
 
-/**
- * Sample text pixels and convert to colored particles
- */
 export function createParticlesFromText(
   element: HTMLElement,
   reductionFactor = 3,
-): ColoredParticle[] {
-  const particles: ColoredParticle[] = [];
+): Particle[] {
+  const particles: Particle[] = [];
 
   const offscreen = document.createElement("canvas");
   const rect = element.getBoundingClientRect();
@@ -92,16 +70,13 @@ export function createParticlesFromText(
       const idx = (y * offscreen.width + x) * 4;
       const alpha = pixels[idx + 3];
 
-      if (alpha < 128) continue; // skip transparent pixels
+      if (alpha < 128) continue;
 
       particles.push({
         x: rect.left + x,
         y: rect.top + y,
         vx: Math.random() * window.innerWidth - (rect.left + x),
         vy: Math.random() * window.innerHeight - (rect.top + y),
-        r: pixels[idx],
-        g: pixels[idx + 1],
-        b: pixels[idx + 2],
         alpha: 1,
         size: Math.random() * 2 + 1,
       });
@@ -111,9 +86,6 @@ export function createParticlesFromText(
   return particles;
 }
 
-/**
- * Render basic particles to canvas (for GSAP-animated particles)
- */
 export function renderParticles(
   ctx: CanvasRenderingContext2D,
   particles: Particle[],
