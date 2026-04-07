@@ -19,11 +19,9 @@ import type { Tool } from "./types";
 export const tools: Tool[] = [{
   icon: TablerBrandHTML5,
   label: "HTML",
-  category: "Fundamentals"
 }, {
   icon: TablerBrandCSS3,
   label: "CSS",
-  category: "Fundamentals",
   extras: [{
     icon: TablerBrandTailwind,
     label: "Tailwind CSS"
@@ -31,7 +29,6 @@ export const tools: Tool[] = [{
 }, {
   icon: TablerBrandJavaScript,
   label: "JS",
-  category: "Fundamentals",
   extras: [{
     icon: TablerBrandTypescript,
     label: "Typescript"
@@ -39,7 +36,6 @@ export const tools: Tool[] = [{
 }, {
   icon: TablerSQL,
   label: "SQL",
-  category: "Backend",
   extras: [{
     icon: TablerBrandMySQL,
     label: "MySQL"
@@ -47,11 +43,9 @@ export const tools: Tool[] = [{
 }, {
   icon: TablerBrandMongoDB,
   label: "MongoDB",
-  category: "Backend"
 }, {
   icon: TablerBrandReact,
   label: "React",
-  category: "Frontend",
   extras: [{
     icon: TablerBrandNextJS,
     label: "NextJS"
@@ -59,7 +53,6 @@ export const tools: Tool[] = [{
 }, {
   icon: TablerBrandVue,
   label: "Vue",
-  category: "Frontend",
   extras: [{
     icon: TablerBrandNuxt,
     label: "Nuxt"
@@ -67,11 +60,9 @@ export const tools: Tool[] = [{
 }, {
   icon: TablerBrandNodeJS,
   label: "Node",
-  category: "Backend"
 }, {
   icon: TablerBrandPHP,
   label: "PHP",
-  category: "Backend",
   extras: [{
     icon: TablerBrandLaravel,
     label: "Laravel"
@@ -79,5 +70,4 @@ export const tools: Tool[] = [{
 }, {
   icon: TablerBrandGit,
   label: "Git",
-  category: "Others"
 }]
