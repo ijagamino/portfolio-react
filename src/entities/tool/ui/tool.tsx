@@ -7,8 +7,7 @@ interface ToolProps extends ComponentProps<"div"> {
 
 export default function Tool({ tool }: ToolProps) {
   return (
-
-    <div>
+    <div className="text-center">
       <tool.icon className="size-12 md:size-24" />
       {tool.label}
     </div>
