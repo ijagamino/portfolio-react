@@ -12,7 +12,7 @@ export default function Project({ project }: ProjectProps) {
       <img
         src={project.image}
         alt={project.title}
-        className="w-full rounded-2xl border-4"
+        className="w-full bg-primary rounded-2xl border-4"
       />
 
       <h3 className="my-4 text-2xl font-bold md:text-4xl">

@@ -64,7 +64,7 @@ export default function DustButton({
 
       tl.to(button, {
         duration: DUST_BUTTON_FADE_DURATION,
-        opacity: 0,
+        autoAlpha: 0,
         scale: 0.5,
       })
         .to(
