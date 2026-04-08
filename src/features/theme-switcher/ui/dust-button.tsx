@@ -28,10 +28,19 @@ export default function DustButton({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const { theme, toggleTheme } = useTheme();
   const themeRef = useRef(theme);
+  const tlRef = useRef<gsap.core.Timeline | null>(null)
 
   useEffect(() => {
     themeRef.current = theme;
-  }, [theme]);
+    const tl = tlRef.current;
+    const canvas = canvasRef.current;
+    if (!tl || !canvas) return;
+
+    // Force onUpdate to fire by seeking slightly then back
+    const current = tl.progress();
+    if (current === 0) return; // nothing to repaint yet
+    tl.progress(current - 0.0001).progress(current);
+  }, [theme, canvasRef]);
 
   useGSAP(() => {
     const button = buttonRef.current
@@ -52,6 +61,7 @@ export default function DustButton({
       const particles = createParticlesFromPoint(button, particleTargets);
 
       const tl = gsap.timeline({ paused: true });
+      tlRef.current = tl
 
       tl.to(button, {
         duration: DUST_BUTTON_FADE_DURATION,
