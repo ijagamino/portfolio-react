@@ -29,9 +29,15 @@ export default function HeroSection({
   const sectionRef = useRef<HTMLElement | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
   const smoother = ScrollSmoother.get();
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   useEffect(() => {
     themeRef.current = theme;
+
+    const st = scrollTriggerRef.current;
+    if (!st) return;
+
+    st.vars.onUpdate?.(st);
   }, [theme]);
 
   const mergeRefs = (element: HTMLElement | null) => {
@@ -99,6 +105,7 @@ export default function HeroSection({
         },
       });
 
+      scrollTriggerRef.current = scrollTrigger;
       return scrollTrigger;
     };
 

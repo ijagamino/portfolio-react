@@ -12,7 +12,7 @@ import {
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import { useRef, type ComponentProps, type RefObject } from "react";
+import { useEffect, useRef, type ComponentProps, type RefObject } from "react";
 import TablerMoon from "~icons/tabler/moon";
 import TablerSun from "~icons/tabler/sun";
 
@@ -27,6 +27,11 @@ export default function DustButton({
 }: DustButtonProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const { theme, toggleTheme } = useTheme();
+  const themeRef = useRef(theme);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   useGSAP(() => {
     const button = buttonRef.current
@@ -66,7 +71,7 @@ export default function DustButton({
               ease: "power1.in",
             },
             onUpdate: () => {
-              const particleColor = theme === "light" ? "#000000" : "#ffffff";
+              const particleColor = themeRef.current === "light" ? "#000000" : "#ffffff";
               renderParticles(ctx, particles, particleColor);
             },
           },
@@ -85,7 +90,7 @@ export default function DustButton({
     };
 
     initParticles()
-  }, [triggerElement, theme]);
+  }, [triggerElement]);
 
   return (
     <>
