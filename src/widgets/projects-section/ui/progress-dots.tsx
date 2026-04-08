@@ -15,7 +15,7 @@ export default function ProgressDots({
 }: ProgressDotsProps) {
   return (
     <div
-      className={cn("fixed bottom-8 left-1/2 z-50 flex gap-4 px-2 py-1 -translate-x-1/2 rounded-full pointer-events-none bg-primary", className)}
+      className={cn("fixed bottom-8 left-1/2 z-50 flex gap-4 px-2 py-1 -translate-x-1/2 rounded-full pointer-events-none bg-secondary", className)}
       {...props}
     >
       {projects.map((_, i) => (
@@ -24,8 +24,8 @@ export default function ProgressDots({
           className={cn(
             "size-4 rounded-full transition-all duration-300",
             i === activeIndex
-              ? "bg-accent scale-125"
-              : "bg-accent/50"
+              ? "bg-primary scale-125"
+              : "bg-primary/50"
           )}
         />
       ))}

@@ -53,8 +53,6 @@ export default function Navbar({ visible }: { visible: boolean }) {
             end: `+=${gsapTarget.pinnedScrollLength}`,
             onEnter: () => setActiveSection(sectionId),
             onEnterBack: () => setActiveSection(sectionId),
-            onLeave: () => setActiveSection(""),
-            onLeaveBack: () => setActiveSection(""),
           });
         }
       } else if (targetElement) {
@@ -64,8 +62,6 @@ export default function Navbar({ visible }: { visible: boolean }) {
           end: "bottom center",
           onEnter: () => setActiveSection(sectionId),
           onEnterBack: () => setActiveSection(sectionId),
-          onLeave: () => setActiveSection(""),
-          onLeaveBack: () => setActiveSection(""),
         });
       }
     });
@@ -120,7 +116,7 @@ export default function Navbar({ visible }: { visible: boolean }) {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }
           }}
-          className="text-xl font-bold tracking-tight uppercase hover:text-accent"
+          className="text-xl font-bold tracking-tight uppercase"
         >
           Ivan
         </a>
@@ -135,12 +131,11 @@ export default function Navbar({ visible }: { visible: boolean }) {
                 <a
                   href={href}
                   onClick={(e) => handleNavClick(e, href)}
-                  className={`relative text-sm font-medium hover:text-accent ${isActive ? "text-accent" : ""
-                    }`}
+                  className={`relative text-sm font-medium`}
                 >
                   {label}
                   {isActive && (
-                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-accent" />
+                    <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary-foreground" />
                   )}
                 </a>
               </li>
@@ -200,10 +195,12 @@ export default function Navbar({ visible }: { visible: boolean }) {
                   <a
                     href={href}
                     onClick={(e) => handleNavClick(e, href)}
-                    className={`block px-6 py-3 text-sm font-medium hover:bg-foreground/10 ${isActive ? "text-accent bg-foreground/5" : ""
-                      }`}
+                    className={`relative block px-6 py-3 text-sm font-medium`}
                   >
                     {label}
+                    {isActive && (
+                      <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary-foreground" />
+                    )}
                   </a>
                 </li>
               );
