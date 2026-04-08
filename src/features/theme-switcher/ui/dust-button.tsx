@@ -31,15 +31,14 @@ export default function DustButton({
   const tlRef = useRef<gsap.core.Timeline | null>(null)
 
   useEffect(() => {
-    themeRef.current = theme;
-    const tl = tlRef.current;
-    const canvas = canvasRef.current;
-    if (!tl || !canvas) return;
+    themeRef.current = theme
+    const tl = tlRef.current
+    const canvas = canvasRef.current
+    if (!tl || !canvas) return
 
-    // Force onUpdate to fire by seeking slightly then back
-    const current = tl.progress();
-    if (current === 0) return; // nothing to repaint yet
-    tl.progress(current - 0.0001).progress(current);
+    const current = tl.progress()
+    if (current === 0) return
+    tl.progress(current - 0.0001).progress(current)
   }, [theme, canvasRef]);
 
   useGSAP(() => {
