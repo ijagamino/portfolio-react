@@ -8,14 +8,14 @@ interface ProjectProps extends ComponentProps<"div"> {
 
 export default function Project({ project }: ProjectProps) {
   return (
-    <div className="relative z-10 max-w-4xl p-6 text-center content text-primary-foreground">
+    <div className="relative z-10 max-w-xl p-6 text-center content text-primary-foreground">
       <img
         src={project.image}
         alt={project.title}
         className="w-full rounded-2xl shadow-2xl"
       />
 
-      <h3 className="my-4 text-2xl font-bold md:text-6xl">
+      <h3 className="my-4 text-2xl font-bold md:text-4xl">
         <span className="inline-block rounded bg-primary">
           {project.title}
         </span>
@@ -32,7 +32,7 @@ export default function Project({ project }: ProjectProps) {
         ))}
       </div>
 
-      <p className="mb-6 md:text-2xl">
+      <p className="mb-6 md:text-lg">
         <span className="inline-block px-2 py-1 rounded bg-primary">
           {project.description}
         </span>{" "}
