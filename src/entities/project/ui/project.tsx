@@ -1,6 +1,7 @@
 import { cn } from "@/shared/lib/cn";
 import type { ComponentProps } from "react";
 import type { Project } from "../model/types";
+import TablerMoodSadDizzy from "~icons/tabler/mood-sad-dizzy"
 
 interface ProjectProps extends ComponentProps<"div"> {
   project: Project
@@ -9,11 +10,18 @@ interface ProjectProps extends ComponentProps<"div"> {
 export default function Project({ project }: ProjectProps) {
   return (
     <div className="relative z-10 max-w-xl p-6 text-center content text-primary-foreground">
-      <img
-        src={project.image}
-        alt={project.title}
-        className="w-full bg-primary rounded-2xl border-4"
-      />
+      {project.image ? (
+        <img
+          src={project.image}
+          alt={project.title}
+          className="w-full border-4 rounded-2xl bg-primary"
+        />
+      ) : (
+        <div className="grid p-4 border-4 rounded-2xl bg-primary place-items-center">
+          No image preview
+          <TablerMoodSadDizzy className="size-12 md:size-24" />
+        </div>
+      )}
 
       <h3 className="my-4 text-2xl font-bold md:text-4xl">
         <span className="inline-block rounded bg-primary">
