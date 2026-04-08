@@ -39,7 +39,7 @@ export default function ContactSection() {
 
     if (!section || !introduction || !introductionContainer || !heading || !contentContainer || !socialLinkContainer) return
 
-    gsap.set(introduction, { opacity: 0 })
+    gsap.set(introduction, { autoAlpha: 0 })
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -61,10 +61,10 @@ export default function ContactSection() {
     });
 
     tl.to(introduction, {
-      opacity: 1
+      autoAlpha: 1
     }, "<")
       .from(introductionSplit.chars, {
-        opacity: 0,
+        autoAlpha: 0,
         ease: "elastic.out",
         stagger: {
           each: 2 / introductionSplit.chars.length,
@@ -72,7 +72,7 @@ export default function ContactSection() {
         },
       }, ">")
       .to(introductionSplit.chars, {
-        opacity: 0,
+        autoAlpha: 0,
         ease: "elastic.out",
         stagger: {
           each: 2 / introductionSplit.chars.length,
@@ -81,10 +81,10 @@ export default function ContactSection() {
       }, ">+2")
       .from([heading, contentContainer], {
         y: (i: number) => (i === 0 ? -40 : 40),
-        opacity: 0,
+        autoAlpha: 0,
       })
       .to(introductionContainer, {
-        opacity: 0
+        autoAlpha: 0
       }, "<")
       .addLabel("contact-revealed")
 
@@ -125,7 +125,7 @@ export default function ContactSection() {
               method="POST"
             >
               <Field className="flex flex-col gap-2">
-                <Label htmlFor="name">Name (optional)</Label>
+                <Label htmlFor="name">Name</Label>
                 <Input name="name" id="name" type="text" required />
               </Field>
 
