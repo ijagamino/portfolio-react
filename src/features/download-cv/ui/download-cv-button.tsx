@@ -13,7 +13,7 @@ export default function DownloadCVButton() {
   };
 
   return (
-    <Button onClick={handleDownload} className="mx-auto">
+    <Button onClick={handleDownload}>
       <FileDownload className="size-12" />
       Download CV
     </Button>
